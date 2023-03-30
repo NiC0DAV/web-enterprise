@@ -131,4 +131,4 @@ const updateAdminValidation = [
 
 
 
-module.exports = { createAdminValidation, findByIdValidation };
+module.exports = { createAdminValidation, findByIdValidation, updateAdminValidation };
