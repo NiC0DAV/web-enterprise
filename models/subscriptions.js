@@ -1,5 +1,5 @@
 'use strict'
-const { Schema } = require('../config/environment');
+const { mongoose, Schema } = require('../config/environment');
 
 const SubscriptionSchema = Schema({
     adm_id: { type: Schema.ObjectId, ref: 'adm_users', required: true },

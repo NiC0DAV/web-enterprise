@@ -1,5 +1,5 @@
 'use strict'
-const { Schema } = require('../config/environment');
+const { mongoose, Schema } = require('../config/environment');
 
 const ReviewSchema = Schema({
     tenant_id: { type: Schema.ObjectId, ref: 'tenants', required: true },
@@ -9,7 +9,7 @@ const ReviewSchema = Schema({
     location_ip: { type: String, required: true },
     description: { type: String, required: true },
     rating: { type: String, required: true },
-    status: { type: Status, required: true }
+    status: { type: Number, required: true }
 });
 
 module.exports = mongoose.model("reviews", ReviewSchema);

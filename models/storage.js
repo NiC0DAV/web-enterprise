@@ -1,7 +1,7 @@
 'use strict'
-const { Schema } = require('../config/environment');
+const { mongoose, Schema } = require('../config/environment');
 
-const ReviewSchema = Schema({
+const StorageSchema = Schema({
     tenant_id: { type: Schema.ObjectId, ref: 'tenants', required: true },
     template_id: { type: Schema.ObjectId, ref: 'templates', required: true },
     file_type: { type: String, required: true },
@@ -13,4 +13,4 @@ const ReviewSchema = Schema({
     slider_status: { type: Number, required: true }
 });
 
-module.exports = mongoose.model("reviews", ReviewSchema);
+module.exports = mongoose.model("storage", StorageSchema);

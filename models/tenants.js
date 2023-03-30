@@ -1,5 +1,5 @@
 'use strict'
-const { Schema } = require('../config/environment');
+const { mongoose, Schema } = require('../config/environment');
 
 const TenantSchema = Schema({
     payment_id: { type: Schema.ObjectId, ref: 'payments' },

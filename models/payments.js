@@ -1,5 +1,5 @@
 'use strict'
-const { Schema } = require('../config/environment');
+const { mongoose, Schema } = require('../config/environment');
 
 //Averiguar que datos se requiere conservar para tarjetas tokenizadas y pagos automaticos
 

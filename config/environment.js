@@ -1,9 +1,15 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
 
-const PORT = process.env.PORT || 3000;
-const PUBLIC_FOLDER = process.env.PUBLIC_FOLDER;
-const ROUTES_FOLDER = process.env.ROUTES_FOLDER;
-const BASE_ROUTE_NAME = process.env.BASE_ROUTE_NAME;
+const environment = {
+    mongoose: mongoose,
+    Connect: mongoose.connect,
+    Schema: mongoose.Schema,
+    PORT: process.env.PORT || 3000,
+    PUBLIC_FOLDER: process.env.PUBLIC_FOLDER,
+    ROUTES_FOLDER: process.env.ROUTES_FOLDER,
+    BASE_ROUTE_NAME: process.env.BASE_ROUTE_NAME,
+    DB_URI: process.env.DB_URI,
+    LOCAL_DB_URI: process.env.LOCAL_DB_URI
+}
 
-module.exports = { PORT, PUBLIC_FOLDER, ROUTES_FOLDER, BASE_ROUTE_NAME, Schema }
+module.exports = environment;
