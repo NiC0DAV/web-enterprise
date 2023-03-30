@@ -1,5 +1,6 @@
 'use strict'
 const { mongoose, Schema } = require('../config/environment');
+const mongooseDelete = require('mongoose-delete');
 
 const SubscriptionSchema = Schema({
     adm_id: { type: Schema.ObjectId, ref: 'adm_users', required: true },
@@ -14,4 +15,5 @@ const SubscriptionSchema = Schema({
     versionKey: false
 });
 
+SubscriptionSchema.plugin(mongooseDelete, { overrideMethods: "all" });
 module.exports = mongoose.model("subscriptions", SubscriptionSchema);

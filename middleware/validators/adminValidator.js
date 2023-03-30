@@ -32,7 +32,9 @@ const createAdminValidation = [
         .withMessage({
             traceCode: 'B-100',
             message: `Sorry, we cannot process the request, please validate the data you just entered, email has to be a type email data.`
-        }),
+        })
+        .trim()
+        .escape(),
     check(`password`)
         .exists()
         .notEmpty()
@@ -47,24 +49,6 @@ const createAdminValidation = [
             message: `Sorry, we cannot process the request, please validate the data you just entered, password has to be composed:
             min length: 8 characters, at least 1 uppercase, at least 1 number and at least 1 symbol(!,@,#,$,%,&,*,.).`
         }),
-    check(`verif_code`)
-        .exists()
-        .withMessage({
-            traceCode: 'B-100',
-            message: `Sorry, we cannot process the request, please validate the data you just entered, verif_code is a mandatory field.`
-        })
-        .notEmpty()
-        .withMessage({
-            traceCode: 'B-100',
-            message: `Sorry, we cannot process the request, please validate the data you just entered, verif_code is a mandatory field.`
-        })
-        .trim()
-        .isHash('sha256')
-        .withMessage({
-            traceCode: 'B-100',
-            message: `Sorry, we cannot process the request, please validate the data you just entered, verif_code has to be in SHA-256.`
-        })
-        ,
     (req, res, next) => validateResults(req, res, next)
 ];
 
@@ -103,7 +87,9 @@ const updateAdminValidation = [
     check("email")
         .optional()
         .isEmail()
-        .normalizeEmail(),
+        .normalizeEmail()
+        .trim()
+        .escape(),
     check("password")
         .optional()
         .trim()
@@ -129,6 +115,57 @@ const updateAdminValidation = [
     (req, res, next) => validateResults(req, res, next)
 ];
 
+const deleteAdminValidation = [
+    param("id")
+        .exists()
+        .withMessage({
+            traceCode: 'B-100',
+            message: `Sorry, we cannot process the request, please validate the data you just entered, id is a mandatory parameter.`
+        })
+        .isMongoId()
+        .withMessage({
+            traceCode: 'B-100',
+            message: `Sorry, we cannot process the request, please validate the data you just entered, id has to be an identifier.`
+        })
+        .trim()
+        .escape(),
+    (req, res, next) => validateResults(req, res, next)
+]
+
+const loginAdminValidation = [
+    check("email")
+        .exists()
+        .notEmpty()
+        .withMessage({
+            traceCode: 'B-100',
+            message: `Sorry, we cannot process the request, please validate the data you just entered, email is a mandatory field.`
+        })
+        .isEmail()
+        .withMessage({
+            traceCode: 'B-100',
+            message: `Sorry, we cannot process the request, please validate the data you just entered, email has to be a type email data.`
+        })
+        .normalizeEmail()
+        .trim()
+        .escape()
+        ,
+    check("password")
+        .exists()
+        .notEmpty()
+        .isStrongPassword()
+        .withMessage({
+            traceCode: 'B-100',
+            message: `Sorry, we cannot process the request, please validate the data you just entered, password has to be composed:
+            min length: 8 characters, at least 1 uppercase, at least 1 number and at least 1 symbol(!,@,#,$,%,&,*,.).`
+        })
+        .trim(),
+    check("verif_code")
+        .optional()
+        .isHash('sha256')
+        .trim()
+        .escape(),
+    (req, res, next) => validateResults(req, res, next)
+]
 
 
-module.exports = { createAdminValidation, findByIdValidation, updateAdminValidation };
+module.exports = { createAdminValidation, findByIdValidation, updateAdminValidation, deleteAdminValidation, loginAdminValidation };

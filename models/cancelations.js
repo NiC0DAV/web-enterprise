@@ -1,5 +1,6 @@
 'use strict'
 const { mongoose, Schema } = require('../config/environment');
+const mongooseDelete = require('mongoose-delete');
 
 const CancelSchema = Schema({
     tenant_id: { type: Schema.ObjectId, ref: 'tenants', required: true},
@@ -11,4 +12,5 @@ const CancelSchema = Schema({
     versionKey: false
 });
 
+CancelSchema.plugin(mongooseDelete, { overrideMethods: "all" });
 module.exports = mongoose.model("cancelations", CancelSchema);

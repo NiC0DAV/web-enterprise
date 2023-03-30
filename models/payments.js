@@ -1,8 +1,8 @@
 'use strict'
 const { mongoose, Schema } = require('../config/environment');
+const mongooseDelete = require('mongoose-delete');
 
 //Averiguar que datos se requiere conservar para tarjetas tokenizadas y pagos automaticos
-
 const PaymentSchema = Schema({
     tenant_id: { type: Schema.ObjectId, ref: 'tenants', required: true},
     subscription_id: { type: Schema.ObjectId, ref: 'subscriptions', required: true },
@@ -21,4 +21,5 @@ const PaymentSchema = Schema({
     versionKey: false
 });
 
+PaymentSchema.plugin(mongooseDelete, { overrideMethods: "all" });
 module.exports = mongoose.model("payments", PaymentSchema);

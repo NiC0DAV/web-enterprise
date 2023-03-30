@@ -1,5 +1,6 @@
 'use strict'
 const { mongoose, Schema } = require('../config/environment');
+const mongooseDelete = require('mongoose-delete');
 
 const StorageSchema = Schema({
     tenant_id: { type: Schema.ObjectId, ref: 'tenants', required: true },
@@ -13,4 +14,5 @@ const StorageSchema = Schema({
     slider_status: { type: Number, required: true }
 });
 
+StorageSchema.plugin(mongooseDelete, { overrideMethods: "all" });
 module.exports = mongoose.model("storage", StorageSchema);

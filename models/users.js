@@ -1,5 +1,6 @@
 'use strict'
 const { mongoose, Schema } = require('../config/environment');
+const mongooseDelete = require('mongoose-delete');
 
 const UserSchema = Schema({
     tenant_id: { type: Schema.ObjectId, ref: 'tenants', required: true },
@@ -13,4 +14,5 @@ const UserSchema = Schema({
     versionKey: false
 });
 
+UserSchema.plugin(mongooseDelete, { overrideMethods: "all" });
 module.exports = mongoose.model("users", UserSchema);

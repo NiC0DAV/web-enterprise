@@ -1,12 +1,20 @@
+const bcrypt = require("bcrypt");
+const CryptoJS = require("crypto-js");
+const Base64 = require('crypto-js/enc-base64');
+const moment = require('moment-timezone');
+
 const { matchedData } = require('express-validator');
 const { adminsModel } = require('../models/index');
 const { handleHttpResponse } = require('../utils/handleResponse');
+const { SECRET_ADMIN,JWT_VALIDITY_TIME, TYPE_TIME } = require('../config/environment');
+const { tokenGen } = require('../utils/jwtAuth');
 
 const adminRegister = async (req, res) => {
-    const body = matchedData(req);
-
     try {
-        const admins = await adminsModel.find({ email: body.email });
+        const { email, password } = matchedData(req);
+        const {password: hashedPassword, verif_code: verifCode} = await hashPassword(password);
+        
+        const admins = await adminsModel.find({ email });
         const response = admins.length ? {
             code: 400,
             status: 'Error',
@@ -15,9 +23,9 @@ const adminRegister = async (req, res) => {
             code: 200,
             status: 'Success',
             message: 'The user has been registered succesfully.',
-            data: await adminsModel.create(body),
+            data: await adminsModel.create({ ...matchedData(req), password: hashedPassword, verif_code: verifCode }),
         }
-        
+
         handleHttpResponse(res, response);
     } catch (er) {
         const response = {
@@ -91,7 +99,7 @@ const updateAdmin = async (req, res) => {
         const admin = await adminsModel.findOne({ email });
 
         if (!admin) {
-            const { id, name, surname, email, password, verif_code, rol, user_status } = matchedData(req);
+            const { id, name, surname, email, password, rol, user_status } = matchedData(req);
             const updateFields = {
                 name,
                 surname,
@@ -102,8 +110,10 @@ const updateAdmin = async (req, res) => {
             };
 
             if (password) {
-                updateFields.password = password;
-                updateFields.verif_code = verif_code;
+                const { password: hashedPassword, verif_code: verifCode } = await hashPassword(password);
+
+                updateFields.password = hashedPassword;
+                updateFields.verif_code = verifCode;
             }
 
             const response = {
@@ -125,6 +135,7 @@ const updateAdmin = async (req, res) => {
             handleHttpResponse(res, response);
         }
     } catch (error) {
+        // console.log(error);
         const response = {
             code: 500,
             status: 'Error',
@@ -135,5 +146,70 @@ const updateAdmin = async (req, res) => {
     }
 }
 
+const deleteAdmin = async (req, res) => {
+    try {
+        const { id } = matchedData(req);
+        const validateExistence = await adminsModel.findOne({ _id: id });
 
-module.exports = { adminRegister, fetchAdmins, fetchAdminById, updateAdmin }
+        if (validateExistence) {
+            const response = {
+                code: 200,
+                traceCode: "A-100A",
+                status: 'Success',
+                message: 'Admin deleted successfully.',
+                data: await adminsModel.delete({_id: id})
+            };
+
+            handleHttpResponse(res, response);
+        } else {
+            const response = {
+                code: 404,
+                status: 'Error',
+                message: 'Specified user not found or it has been already deleted.'
+            };
+            handleHttpResponse(res, response);
+        } 
+    } catch (error) {
+        console.log(error);
+        const response = {
+            code: 500,
+            status: 'Error',
+            message: 'There was an error searching the Admin. Please try again or contact support.'
+        };
+
+        handleHttpResponse(res, response);
+    }
+}
+
+const adminLogin = async (req, res) => {
+    const { email, password, verif_code } = matchedData(req);
+    const jwtGen = await tokenGen(res, email, password, verif_code);
+
+    if (jwtGen) {
+        const response = {
+            code: 200,
+            status: 'Success',
+            message: 'Jason Web Token generated succesfully.',
+            data: {
+                JWT: jwtGen,
+                validity: ((moment().add(JWT_VALIDITY_TIME, TYPE_TIME).unix() - moment().unix()) / 3600) +' '+TYPE_TIME
+            }
+        }
+        handleHttpResponse(res, response);
+    }
+
+    
+}
+
+const hashPassword = async (pasword) => {
+    const hashGen = await bcrypt.hash(pasword, 10);
+    const secret = Buffer.from(SECRET_ADMIN + '_' + hashGen).toString('base64');
+    const verifCode = CryptoJS.SHA256(secret).toString();
+
+    return {
+        password: hashGen,
+        verif_code: verifCode
+    }
+}
+
+module.exports = { adminRegister, fetchAdmins, fetchAdminById, updateAdmin, deleteAdmin, adminLogin }
