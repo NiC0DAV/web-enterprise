@@ -1,4 +1,4 @@
-const { check, param } = require('express-validator');
+const { check, param, header } = require('express-validator');
 const { validateResults } = require('../../utils/helpers');
 
 const createAdminValidation = [
@@ -148,7 +148,7 @@ const loginAdminValidation = [
         .normalizeEmail()
         .trim()
         .escape()
-        ,
+    ,
     check("password")
         .exists()
         .notEmpty()
@@ -165,7 +165,16 @@ const loginAdminValidation = [
         .trim()
         .escape(),
     (req, res, next) => validateResults(req, res, next)
-]
+];
+
+const jwtAdminValidation = [
+    header("Authorization")
+        .exists()
+        .isJWT()
+        .trim()
+        .escape(),
+    (req, res, next) => validateResults(req, res, next)
+];
 
 
-module.exports = { createAdminValidation, findByIdValidation, updateAdminValidation, deleteAdminValidation, loginAdminValidation };
+module.exports = { createAdminValidation, findByIdValidation, updateAdminValidation, deleteAdminValidation, loginAdminValidation, jwtAdminValidation };

@@ -88,9 +88,9 @@ const fetchAdminById = async (req, res) => {
             status: 'Error',
             message: 'There was an error searching the Admin, try it again or contact with the support team.'
         }
-    }
 
-    handleHttpResponse(res, response);
+        handleHttpResponse(res, response);
+    }
 }
 
 const updateAdmin = async (req, res) => {
@@ -189,16 +189,23 @@ const adminLogin = async (req, res) => {
         const response = {
             code: 200,
             status: 'Success',
-            message: 'Jason Web Token generated succesfully.',
+            message: 'JWT generated succesfully.',
             data: {
                 JWT: jwtGen,
-                validity: ((moment().add(JWT_VALIDITY_TIME, TYPE_TIME).unix() - moment().unix()) / 3600) +' '+TYPE_TIME
+                validity: ((moment().add(JWT_VALIDITY_TIME, TYPE_TIME).unix() - moment().unix()) / 3600) + ' ' + TYPE_TIME
             }
+        }
+        await adminsModel.findOneAndUpdate({ email }, { last_connection: Date.now() });
+
+        handleHttpResponse(res, response);
+    } else {
+        const response = {
+            code: 400,
+            status: 'Error',
+            message: 'Sorry, there was an error logging you, try it again.'
         }
         handleHttpResponse(res, response);
     }
-
-    
 }
 
 const hashPassword = async (pasword) => {

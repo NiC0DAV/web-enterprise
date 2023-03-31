@@ -33,6 +33,7 @@ const tokenGen = async (res, email, plainPassword, verificationCode) => {
         return false;
     }
 }
+
 const comparePassword = async (password, passHashed) => {
     const result = await bcrypt.compare(password, passHashed);
     return result;
