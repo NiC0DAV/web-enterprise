@@ -40,6 +40,7 @@ const adminRegister = async (req, res) => {
 
 const fetchAdmins = async (req, res) => {
     const data = await adminsModel.find();
+    /*console.log(req.userAudit)*/
     try {
         const response = data.length ? {
             code: 200,
@@ -135,7 +136,6 @@ const updateAdmin = async (req, res) => {
             handleHttpResponse(res, response);
         }
     } catch (error) {
-        // console.log(error);
         const response = {
             code: 500,
             status: 'Error',

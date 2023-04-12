@@ -170,7 +170,15 @@ const loginAdminValidation = [
 const jwtAdminValidation = [
     header("Authorization")
         .exists()
+        .withMessage({
+            traceCode: 'B-103',
+            message: `Sorry, we cannot process the request, please validate the data you just entered, Authorization is a mandatory header.`
+        })
         .isJWT()
+        .withMessage({
+            traceCode: 'B-103',
+            message: `Sorry, we cannot process the request, please validate the data you just entered, Wrong number of segments.`
+        })
         .trim()
         .escape(),
     (req, res, next) => validateResults(req, res, next)

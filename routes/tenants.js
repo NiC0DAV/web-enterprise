@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-router.post('/', (req, res) => {
-    res.status(200).send('Welcome');
-});
+const { tenantRegister } = require('../controllers/TenantsController');
+
+router.post('/create', tenantRegister);
 
 module.exports = router;
