@@ -1,7 +1,11 @@
 const { validationResult } = require('express-validator');
+const { SECRET_ADMIN, SLACK_WEBHOOK } = require('../config/environment');
+const { IncomingWebhook } = require("@slack/webhook");
+
 const bcrypt = require("bcrypt");
 const CryptoJS = require("crypto-js");
 const Base64 = require('crypto-js/enc-base64');
+const webHook = new IncomingWebhook(SLACK_WEBHOOK);
 
 const validateResults = (req, res, next) => {
     try {
@@ -33,4 +37,17 @@ const hashPassword = async (password, userType = "customer") => {
     }
 }
 
-module.exports = { validateResults, hashPassword };
+const ansiRegex = /[\u001b\u009b][[()#;?]*(?:[0-9]{1,4}(?:;[0-9]{0,4})*)?[0-9A-PR-TZcf-ntqry=><]/g;
+const removeANSI = str => str.replace(ansiRegex, '');
+
+const loggerStream = {
+    write: message => {
+        const cleanMessage = removeANSI(message);
+        webHook.send({
+            text: cleanMessage
+        });
+    },
+};
+
+
+module.exports = { validateResults, hashPassword, loggerStream, removeANSI };

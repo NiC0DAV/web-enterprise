@@ -14,7 +14,8 @@ const environment = {
     SECRET_JWT_KEY: process.env.SECRET_JWT_KEY,
     JWT_VALIDITY: process.env.JWT_VALIDITY,
     JWT_VALIDITY_TIME: process.env.JWT_VALIDITY_TIME,
-    TYPE_TIME: process.env.TYPE_TIME
+    TYPE_TIME: process.env.TYPE_TIME,
+    SLACK_WEBHOOK: process.env.SLACK_WEBHOOK
 }
 
 module.exports = environment;
