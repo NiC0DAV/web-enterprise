@@ -10,10 +10,11 @@ const TenantSchema = Schema({
         name: { type: String, required: true },
         surname: { type: String },
         email: { type: String, unique: true },
+        password: { type: String, required: true },
         country: { type: String, required: true },
         company_name: { type: String, required: true },
         domain_name: { type: String, required: true },
-        creation_date: { type: Date, default: Date.now, required: true },
+        creation_date: { type: Date, default: Date.now },
         subdomain_status: { type: Number, required: true }
     },
     subscription: {
@@ -22,7 +23,7 @@ const TenantSchema = Schema({
         subscription_status: { type: Number, required: true },
         subscription_recurrence: { type: Number }
     },
-},{
+}, {
     timestamps: true,
     versionKey: false
 });

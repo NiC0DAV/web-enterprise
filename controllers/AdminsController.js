@@ -1,19 +1,17 @@
-const bcrypt = require("bcrypt");
-const CryptoJS = require("crypto-js");
-const Base64 = require('crypto-js/enc-base64');
 const moment = require('moment-timezone');
 
 const { matchedData } = require('express-validator');
 const { adminsModel } = require('../models/index');
 const { handleHttpResponse } = require('../utils/handleResponse');
-const { SECRET_ADMIN,JWT_VALIDITY_TIME, TYPE_TIME } = require('../config/environment');
+const { SECRET_ADMIN, JWT_VALIDITY_TIME, TYPE_TIME } = require('../config/environment');
 const { tokenGen } = require('../utils/jwtAuth');
+const { hashPassword } = require("../utils/helpers");
 
 const adminRegister = async (req, res) => {
     try {
         const { email, password } = matchedData(req);
-        const {password: hashedPassword, verif_code: verifCode} = await hashPassword(password);
-        
+        const { password: hashedPassword, verif_code: verifCode } = await hashPassword(password, "admin");
+
         const admins = await adminsModel.find({ email });
         const response = admins.length ? {
             code: 400,
@@ -111,7 +109,7 @@ const updateAdmin = async (req, res) => {
             };
 
             if (password) {
-                const { password: hashedPassword, verif_code: verifCode } = await hashPassword(password);
+                const { password: hashedPassword, verif_code: verifCode } = await hashPassword(password, "admin");
 
                 updateFields.password = hashedPassword;
                 updateFields.verif_code = verifCode;
@@ -157,7 +155,7 @@ const deleteAdmin = async (req, res) => {
                 traceCode: "A-100A",
                 status: 'Success',
                 message: 'Admin deleted successfully.',
-                data: await adminsModel.delete({_id: id})
+                data: await adminsModel.delete({ _id: id })
             };
 
             handleHttpResponse(res, response);
@@ -168,7 +166,7 @@ const deleteAdmin = async (req, res) => {
                 message: 'Specified user not found or it has been already deleted.'
             };
             handleHttpResponse(res, response);
-        } 
+        }
     } catch (error) {
         console.log(error);
         const response = {
@@ -205,17 +203,6 @@ const adminLogin = async (req, res) => {
             message: 'Sorry, there was an error logging you, try it again.'
         }
         handleHttpResponse(res, response);
-    }
-}
-
-const hashPassword = async (pasword) => {
-    const hashGen = await bcrypt.hash(pasword, 10);
-    const secret = Buffer.from(SECRET_ADMIN + '_' + hashGen).toString('base64');
-    const verifCode = CryptoJS.SHA256(secret).toString();
-
-    return {
-        password: hashGen,
-        verif_code: verifCode
     }
 }
 

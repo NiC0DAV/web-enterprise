@@ -1,25 +1,26 @@
 const { check, param, header } = require('express-validator');
 const { validateResults } = require('../../utils/helpers');
+const { tenantsModel } = require('../../models/index');
 
 const createAdminValidation = [
-    check(`payment_id`)
-        .isMongoId()
-        .withMessage({
-            traceCode: 'C-101',
-            message: `Ups!, there was an error processing the data, try it again or contact the support team.`
-        }),
-    check(`subscription_id`)
-        .isMongoId()
-        .withMessage({
-            traceCode: 'C-101',
-            message: `Ups!, there was an error processing the data, try it again or contact the support team.`
-        }),
-    check(`template_id`)
-        .isMongoId()
-        .withMessage({
-            traceCode: 'C-101',
-            message: `Ups!, there was an error processing the data, try it again or contact the support team.`
-        }),
+    // check(`payment_id`)
+    //     .isMongoId()
+    //     .withMessage({
+    //         traceCode: 'C-101',
+    //         message: `Ups!, there was an error processing the data, try it again or contact the support team.`
+    //     }),
+    // check(`subscription_id`)
+    //     .isMongoId()
+    //     .withMessage({
+    //         traceCode: 'C-101',
+    //         message: `Ups!, there was an error processing the data, try it again or contact the support team.`
+    //     }),
+    // check(`template_id`)
+    //     .isMongoId()
+    //     .withMessage({
+    //         traceCode: 'C-101',
+    //         message: `Ups!, there was an error processing the data, try it again or contact the support team.`
+    //     }),
     check(`tenant`)
         .exists()
         .notEmpty(),
@@ -38,7 +39,26 @@ const createAdminValidation = [
         .isEmail()
         .normalizeEmail()
         .trim()
-        .escape(),
+        .escape()
+        .custom(email => {
+            return dbConsult('tenant.email', email).then(
+                response => response ? Promise.reject('Email already in use.') : Promise.resolve(true)
+            );
+        }),
+    check(`tenant.password`)
+        .exists()
+        .notEmpty()
+        .withMessage({
+            traceCode: 'B-100',
+            message: `Sorry, we cannot process the request, please validate the data you just entered, password is a mandatory field.`
+        })
+        .trim()
+        .isStrongPassword()
+        .withMessage({
+            traceCode: 'B-100',
+            message: `Sorry, we cannot process the request, please validate the data you just entered, password has to be composed:
+        min length: 8 characters, at least 1 uppercase, at least 1 number and at least 1 symbol(!,@,#,$,%,&,*,.).`
+        }),
     check(`tenant.country`)
         .exists()
         .notEmpty()
@@ -48,22 +68,35 @@ const createAdminValidation = [
         .exists()
         .notEmpty()
         .trim()
-        .escape(),
+        .escape()
+        .custom(companyName => {
+            return dbConsult('tenant.company_name', companyName).then(
+                response => response ? Promise.reject('The name of the company already exists.') : Promise.resolve(true)
+            );
+        }),
     check(`tenant.domain_name`)
         .exists()
         .notEmpty()
         .trim()
         .escape(),
-    check(`subscription`)
-        .exists()
-        .notEmpty(),
-    check(`subscription.subscription_date`)
-        .exists()
-        .notEmpty(),
-    check(`subscription.subscription_renovationn_date`)
-        .exists()
-        .notEmpty(),
-    
-    
+    // check(`subscription`)
+    //     .exists()
+    //     .notEmpty(),
+    // check(`subscription.subscription_date`)
+    //     .exists()
+    //     .notEmpty(),
+    // check(`subscription.subscription_renovationn_date`)
+    //     .exists()
+    //     .notEmpty(),
+
+
     (req, res, next) => validateResults(req, res, next)
 ];
+
+const dbConsult = async (field, value) => {
+    let query = {};
+    query[field] = value;
+    return await tenantsModel.findOne(query);
+}
+
+module.exports = { createAdminValidation };
