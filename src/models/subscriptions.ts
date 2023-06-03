@@ -1,4 +1,3 @@
-  
 import environment from '../../config/environment';
 
 const { mongoose, Schema, Types } = environment;

@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ecanavesio/mongoose-delete": "github:Nicodav28/mongoose-delete",
     "@slack/webhook": "^6.1.0",
     "@types/bcrypt": "^5.0.0",
     "@types/cors": "^2.8.13",

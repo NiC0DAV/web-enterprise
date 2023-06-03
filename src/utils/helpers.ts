@@ -41,12 +41,21 @@ const hashPassword = async (password: string, userType: string = "customer"): Pr
 
 const ansiRegex = /[\u001b\u009b][[()#;?]*(?:\d{1,4}(?:\d{0,4})*)?[0-9A-PR-TZcf-ntqry=><]/g;
 
-const removeANSI = (str: string) => str.replace(ansiRegex, '');
+const removeANSI = (str: string) => {
+    try {
+        if (typeof str !== 'string') {
+            throw new Error(`Invalid input. Expected a string, received: ${typeof str}`);
+        }
+        return str.replace(ansiRegex, '');
+    } catch (error) {
+        return `ERROR: ${error}`;
+    }
+};
 
 const loggerStream = new Writable({
     write: async (message: string, encoding, callback) => {
         try {
-            const cleanMessage = removeANSI(message);
+            const cleanMessage = removeANSI(message.toString());
             await webHook.send({
                 text: cleanMessage
             });

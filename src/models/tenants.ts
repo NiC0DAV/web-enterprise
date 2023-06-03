@@ -5,7 +5,6 @@ const { mongoose, Schema, Types } = environment;
 import MongooseDelete from 'mongoose-delete';
 
 const TenantSchema = new Schema({
-    payment_id: { type: Types.ObjectId, ref: 'payments' },
     subscription_id: { type: Types.ObjectId, ref: 'subscriptions', required: true },
     template_id: { type: Types.ObjectId, ref: 'templates' },
     tenant: {
