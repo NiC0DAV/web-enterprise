@@ -10,7 +10,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "All Rights Reserved",
   "dependencies": {
     "@slack/webhook": "^6.1.0",
     "@types/bcrypt": "^5.0.0",
