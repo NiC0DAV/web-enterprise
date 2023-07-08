@@ -26,7 +26,8 @@ const ${modelName.charAt(0).toUpperCase() + modelName.slice(1)}Schema = new Sche
 });
 
 ${modelName.charAt(0).toUpperCase() + modelName.slice(1)}Schema.plugin(MongooseDelete, { overrideMethods: "all" });
-module.exports = mongoose.model("${modelName.replace(/([A-Z])/g, '_$1').toLowerCase()}", ${modelName.charAt(0).toUpperCase() + modelName.slice(1)}Schema);
+const ${modelName.toLowerCase()}Model = mongoose.model("${modelName.replace(/([A-Z])/g, '_$1').toLowerCase()}", ${modelName.charAt(0).toUpperCase() + modelName.slice(1)}Schema);
+export default ${modelName.toLowerCase()}Model;
 `;
 
 fs.writeFile(`src/models/${modelName}.ts`, modelContent, (err) => {
@@ -34,5 +35,9 @@ fs.writeFile(`src/models/${modelName}.ts`, modelContent, (err) => {
         console.error("There was an error creating the model:", err);
     } else {
         console.log(`The model ${modelName} has been created succesfully.`);
+
+        const modelsFileContent = fs.readFileSync("src/models/index.ts", "utf-8");
+        const modelsFileUpdatedContent = modelsFileContent.replace("export default models;", `import ${modelName.toLowerCase()}Model from './${modelName}';\n\nconst models: any = {\n    ...models,\n    ${modelName.toLowerCase()}Model,\n};\n\nexport default models;`);
+        fs.writeFileSync("src/models/index.ts", modelsFileUpdatedContent, "utf-8");
     }
 });

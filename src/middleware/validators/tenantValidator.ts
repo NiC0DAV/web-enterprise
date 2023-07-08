@@ -6,38 +6,20 @@ import models from '../../models/index';
 const { tenantsModel } = models;
 
 const createAdminValidation = [
-    check(`payment_id`)
-        .isMongoId()
-        .withMessage({
-            traceCode: 'C-101',
-            message: `Ups!, there was an error processing the data, try it again or contact the support team.`
-        }),
-    check(`subscription_id`)
-        .isMongoId()
-        .withMessage({
-            traceCode: 'C-101',
-            message: `Ups!, there was an error processing the data, try it again or contact the support team.`
-        }),
-    check(`template_id`)
-        .isMongoId()
-        .withMessage({
-            traceCode: 'C-101',
-            message: `Ups!, there was an error processing the data, try it again or contact the support team.`
-        }),
     check(`tenant`)
         .exists()
         .notEmpty(),
-    check(`tenant.name`)
+    check(`name`)
         .exists()
         .notEmpty()
         .trim()
         .escape(),
-    check(`tenant.surname`)
+    check(`surname`)
         .exists()
         .notEmpty()
         .trim()
         .escape(),
-    check(`tenant.email`)
+    check(`email`)
         .exists()
         .isEmail()
         .normalizeEmail()
@@ -48,7 +30,7 @@ const createAdminValidation = [
                 response => response ? Promise.reject('Email already in use.') : Promise.resolve(true)
             );
         }),
-    check(`tenant.password`)
+    check(`password`)
         .exists()
         .notEmpty()
         .withMessage({
@@ -62,12 +44,12 @@ const createAdminValidation = [
             message: `Sorry, we cannot process the request, please validate the data you just entered, password has to be composed:
         min length: 8 characters, at least 1 uppercase, at least 1 number and at least 1 symbol(!,@,#,$,%,&,*,.).`
         }),
-    check(`tenant.country`)
+    check(`country`)
         .exists()
         .notEmpty()
         .trim()
         .escape(),
-    check(`tenant.company_name`)
+    check(`company_name`)
         .exists()
         .notEmpty()
         .trim()
@@ -77,21 +59,23 @@ const createAdminValidation = [
                 response => response ? Promise.reject('The name of the company already exists.') : Promise.resolve(true)
             );
         }),
-    check(`tenant.domain_name`)
+    check(`domain_name`)
         .exists()
         .notEmpty()
         .trim()
         .escape(),
-    check(`subscription`)
-        .exists()
-        .notEmpty(),
-    check(`subscription.subscription_date`)
-        .exists()
-        .notEmpty(),
-    check(`subscription.subscription_renovationn_date`)
-        .exists()
-        .notEmpty(),
-
+    check(`template_id`)
+        .isMongoId()
+        .withMessage({
+            traceCode: 'C-101',
+            message: `Ups!, there was an error processing the data, try it again or contact the support team.`
+        }),
+    check(`service_id`)
+        .isMongoId()
+        .withMessage({
+            traceCode: 'C-101',
+            message: `Ups!, there was an error processing the data, try it again or contact the support team.`
+        }),
 
     (req: Request, res: Response, next: NextFunction) => validateResults(req, res, next)
 ];
