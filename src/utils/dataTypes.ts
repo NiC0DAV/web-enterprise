@@ -2,6 +2,7 @@ import { ObjectId } from 'mongodb';
 import { Request, Response, NextFunction } from 'express';
 
 type MongoId = ObjectId;
+type CrudProcess = 'Create' | 'Update' | 'Find' | 'FindById' | 'Delete'; 
 
 // Interfaces
 interface CustomRequestAuth extends Request {
@@ -32,4 +33,4 @@ interface AdminData {
     verif_code?: string;
 }
 
-export { MongoId, CustomRequestAuth, Request, Response, NextFunction, HttpResponse, AdminHashResponse, AdminData }
+export { MongoId, CustomRequestAuth, Request, Response, NextFunction, HttpResponse, AdminHashResponse, AdminData, CrudProcess }
