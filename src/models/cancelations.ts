@@ -1,12 +1,10 @@
-  
 import environment from '../../config/environment';
 
 const { mongoose, Schema, Types } = environment;
 import MongooseDelete from 'mongoose-delete';
 
 const CancelSchema = new Schema({
-    tenant_id: { type: Types.ObjectId, ref: 'tenants', required: true},
-    subscription_id: { type: Types.ObjectId, ref: 'subscriptions', required: true },
+    service_id: { type: Types.ObjectId, ref: 'service_renovations', required: true},
     cancel_date: { type: Date, required: true },
     cancel_reason: { type: String, required: true}
 },{

@@ -1,4 +1,3 @@
-  
 import environment from '../../config/environment';
 
 const { mongoose, Schema, Types } = environment;
@@ -6,10 +5,10 @@ import MongooseDelete from 'mongoose-delete';
 
 //Averiguar que datos se requiere conservar para tarjetas tokenizadas y pagos automaticos
 const PaymentSchema = new Schema({
-    tenant_id: { type: Types.ObjectId, ref: 'tenants', required: true},
-    subscription_id: { type: Types.ObjectId, ref: 'subscriptions', required: true },
+    service_id: { type: Types.ObjectId, ref: 'service_renovations', required: true},
     invoice_number: { type: String, required: true },
     unique_tracking_code: { type: String, required: true, unique: true },
+    payment_method: { type: Number, required: true },
     payment_value: { type: Number, required: true },
     payment_description: { type: String, required: true },
     payment_status: { type: String, required: true },

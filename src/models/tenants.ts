@@ -1,29 +1,19 @@
-  
 import environment from '../../config/environment';
 
 const { mongoose, Schema, Types } = environment;
 import MongooseDelete from 'mongoose-delete';
 
 const TenantSchema = new Schema({
-    subscription_id: { type: Types.ObjectId, ref: 'subscriptions', required: true },
+    name: { type: String, required: true },
+    surname: { type: String },
+    email: { type: String, unique: true },
+    password: { type: String, required: true },
+    country: { type: String, required: true },
+    company_name: { type: String, required: true },
+    domain_name: { type: String, required: true },
+    subdomain_status: { type: Number, required: true },
     template_id: { type: Types.ObjectId, ref: 'templates' },
-    tenant: {
-        name: { type: String, required: true },
-        surname: { type: String },
-        email: { type: String, unique: true },
-        password: { type: String, required: true },
-        country: { type: String, required: true },
-        company_name: { type: String, required: true },
-        domain_name: { type: String, required: true },
-        creation_date: { type: Date, default: Date.now },
-        subdomain_status: { type: Number, required: true }
-    },
-    subscription: {
-        subscription_date: { type: Date, required: true },
-        subscription_renovation_date: { type: Date, required: true },
-        subscription_status: { type: Number, required: true },
-        subscription_recurrence: { type: Number }
-    },
+    service_id: { type: Types.ObjectId, ref: 'service_renovations' }
 }, {
     timestamps: true,
     versionKey: false
